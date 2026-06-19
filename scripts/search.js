@@ -1,7 +1,7 @@
 /** Regex search: compile, filter, and highlight */
 
 /**
- * Escape HTML entities to prevent XSS when inserting highlights.
+
  */
 export function escapeHtml(text) {
   const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
