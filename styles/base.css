@@ -1,3 +1,60 @@
+
+:root {
+  --primary-color: #6d28d9;       
+  --primary-light: #8b5cf6;       
+  --primary-dark: #4c1d95;        
+  --bg-color: #f5f3ff;          
+  --text-color: #1e1b4b;          
+}
+
+/* 2. Full-Screen Zoom Intro Layout */
+.intro-splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--primary-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;                 
+  animation: fadeOutOverlay 0.5s ease-in 2.5s forwards; 
+  pointer-events: none;         
+}
+
+.intro-text {
+  color: #ffffff;
+  font-size: 3rem;
+  font-weight: bold;
+  font-family: sans-serif;
+  text-align: center;
+  opacity: 0;
+  transform: scale(0.3);         
+  animation: zoomInText 1.5s cubic-bezier(0.25, 1, 0.5, 1) 0.2s forwards;
+}
+
+@keyframes zoomInText {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);          
+  }
+}
+
+@keyframes fadeOutOverlay {
+  0% {
+    opacity: 1;
+    visibility: visible;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
 *,
 *::before,
 *::after {
