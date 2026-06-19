@@ -1,0 +1,19 @@
+campus-life-planner/
+├── index.html
+├── tests.html
+├── seed.json
+├── README.md
+├── styles/
+│   ├── base.css        # reset, variables, typography
+│   ├── layout.css      # flexbox, breakpoints, landmarks
+│   ├── components.css  # table, cards, forms, stats
+│   └── animations.css  # transitions (e.g. row highlight, cap pulse)
+├── scripts/
+│   ├── main.js         # entry, wires modules
+│   ├── state.js        # in-memory state + mutations
+│   ├── storage.js      # localStorage + import/export
+│   ├── validators.js   # all regex rules
+│   ├── search.js       # regex compile, filter, highlight
+│   └── ui.js           # DOM render, sort, events, a11y
+└── assets/
+    └── (optional icons)

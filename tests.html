@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Life Planner — Validator Tests</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    .pass { color: #059669; }
+    .fail { color: #dc2626; font-weight: 600; }
+    #summary { margin-top: 1.5rem; padding: 1rem; border-radius: 8px; background: #f4f6f9; }
+  </style>
+</head>
+<body>
+  <h1>Validator Tests</h1>
+  <ul id="results"></ul>
+  <div id="summary" role="status"></div>
+
+  <script type="module">
+    import {
+      validateTitle,
+      validateDuration,
+      validateDate,
+      validateTag,
+      validateCap,
+      normalizeTitle,
+      PATTERNS,
+    } from './scripts/validators.js';
+
+    import { compilePattern, recordMatches, highlightMatches } from './scripts/search.js';
+
+    const results = [];
+    let passed = 0;
+    let failed = 0;
+
+    function assert(cond, msg) {
+      if (cond) { passed++; results.push({ ok: true, msg }); }
+      else { failed++; results.push({ ok: false, msg }); }
+    }
+
+    // Title validation
+    assert(validateTitle('Study session').valid, 'accepts valid title');
+    assert(!validateTitle('  bad').valid, 'rejects leading spaces');
+    assert(!validateTitle('bad  ').valid, 'rejects trailing spaces');
+    assert(!validateTitle('hello  world').valid, 'rejects double spaces in raw input');
+    assert(!validateTitle('study study').valid, 'rejects duplicate words (back-reference)');
+    assert(normalizeTitle('  foo   bar  ') === 'foo bar', 'normalizes title');
+
+    // Duration validation
+    assert(validateDuration('90').valid, 'accepts integer duration');
+    assert(validateDuration('1.5', 'hours').valid, 'accepts decimal duration in hours');
+    assert(!validateDuration('-5').valid, 'rejects negative duration');
+    assert(!validateDuration('01').valid, 'rejects leading-zero integer');
+    assert(!validateDuration('1.234').valid, 'rejects more than 2 decimal places');
+
+    // Date validation
+    assert(validateDate('2025-09-29').valid, 'accepts valid date');
+    assert(!validateDate('2025-13-01').valid, 'rejects invalid month');
+    assert(!validateDate('2025-02-30').valid, 'rejects invalid day');
+    assert(!validateDate('25-09-29').valid, 'rejects short year');
+
+    // Tag validation
+    assert(validateTag('Study').valid, 'accepts single-word tag');
+    assert(validateTag('Career Fair').valid, 'accepts multi-word tag');
+    assert(validateTag('Self-Care').valid, 'accepts hyphenated tag');
+    assert(!validateTag('tag123').valid, 'rejects digits in tag');
+    assert(!validateTag('tag_underscore').valid, 'rejects underscores in tag');
+
+    // Cap validation
+    assert(validateCap('1200').valid, 'accepts valid cap');
+    assert(validateCap('').valid, 'accepts empty cap (optional)');
+
+    // Advanced regex patterns
+    assert(PATTERNS.duplicateWord.test('foo foo'), 'duplicate word pattern matches');
+    assert(!PATTERNS.duplicateWord.test('foo bar'), 'duplicate word pattern does not false-positive');
+
+    // Search module
+    const compiled = compilePattern('@tag:Study');
+    assert(compiled.tagFilter === 'Study', '@tag: shorthand parses tag filter');
+
+    const badRegex = compilePattern('([unclosed');
+    assert(badRegex.error !== null, 'invalid regex returns error');
+
+    const timeRegex = compilePattern('\\b\\d{2}:\\d{2}\\b');
+    assert(timeRegex.regex.test('14:00'), 'time token regex matches HH:MM');
+
+    const record = { title: 'Meeting 09:30', dueDate: '2025-06-20', duration: 60, tag: 'Study' };
+    assert(recordMatches(record, timeRegex), 'recordMatches with time regex');
+
+    const tagCompiled = compilePattern('@tag:Study');
+    assert(recordMatches(record, tagCompiled), 'recordMatches with @tag filter');
+    assert(!recordMatches({ ...record, tag: 'Work' }, tagCompiled), '@tag filter excludes non-matching');
+
+    const highlighted = highlightMatches('Study at 14:00', timeRegex.regex);
+    assert(highlighted.includes('<mark>14:00</mark>'), 'highlight wraps match in mark');
+
+    // Render results
+    const list = document.getElementById('results');
+    results.forEach(({ ok, msg }) => {
+      const li = document.createElement('li');
+      li.className = ok ? 'pass' : 'fail';
+      li.textContent = (ok ? '✓ ' : '✗ ') + msg;
+      list.appendChild(li);
+    });
+
+    const summary = document.getElementById('summary');
+    summary.textContent = `${passed} passed, ${failed} failed (${passed + failed} total)`;
+    summary.style.background = failed ? '#fef2f2' : '#ecfdf5';
+  </script>
+</body>
+</html>

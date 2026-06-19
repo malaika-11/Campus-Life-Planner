@@ -1,0 +1,44 @@
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+.record-row.is-new,
+.record-card.is-new {
+  animation: fadeIn 0.35s ease;
+}
+
+.stat-card--cap.cap-exceeded {
+  animation: pulse 0.6s ease;
+}
+
+.trend-bar {
+  transition: height 0.4s ease, background-color var(--transition);
+}
+
+.trend-bar:hover {
+  background: var(--color-primary-hover);
+}
+
+.btn {
+  transition: background var(--transition), transform 0.1s ease, box-shadow var(--transition);
+}
+
+.btn-primary:focus-visible {
+  box-shadow: 0 0 0 3px var(--color-primary-light);
+}

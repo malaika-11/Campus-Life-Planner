@@ -1,0 +1,55 @@
+{
+  "records": [
+    {
+      "id": "rec_0001",
+      "title": "Calculus study group 14:00",
+      "dueDate": "2025-06-20",
+      "duration": 90,
+      "tag": "Study",
+      "createdAt": "2025-06-15T09:00:00.000Z",
+      "updatedAt": "2025-06-15T09:00:00.000Z"
+    },
+    {
+      "id": "rec_0002",
+      "title": "Campus career fair",
+      "dueDate": "2025-06-21",
+      "duration": 120,
+      "tag": "Events",
+      "createdAt": "2025-06-15T10:00:00.000Z",
+      "updatedAt": "2025-06-15T10:00:00.000Z"
+    },
+    {
+      "id": "rec_0003",
+      "title": "Gym workout",
+      "dueDate": "2025-06-19",
+      "duration": 45,
+      "tag": "Health",
+      "createdAt": "2025-06-16T08:00:00.000Z",
+      "updatedAt": "2025-06-16T08:00:00.000Z"
+    },
+    {
+      "id": "rec_0004",
+      "title": "Part-time shift",
+      "dueDate": "2025-06-22",
+      "duration": 240,
+      "tag": "Work",
+      "createdAt": "2025-06-16T11:00:00.000Z",
+      "updatedAt": "2025-06-16T11:00:00.000Z"
+    },
+    {
+      "id": "rec_0005",
+      "title": "Roommate dinner planning",
+      "dueDate": "2025-06-19",
+      "duration": 30,
+      "tag": "Personal",
+      "createdAt": "2025-06-17T18:00:00.000Z",
+      "updatedAt": "2025-06-17T18:00:00.000Z"
+    }
+  ],
+  "settings": {
+    "displayUnit": "minutes",
+    "weeklyCap": 1200,
+    "tags": ["Study", "Events", "Personal", "Work", "Health", "Other"]
+  },
+  "nextId": 6
+}

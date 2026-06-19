@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Campus Life Planner — manage tasks and events with durations, tags, and smart search.">
+  <title>Campus Life Planner</title>
+  <link rel="stylesheet" href="styles/base.css">
+  <link rel="stylesheet" href="styles/layout.css">
+  <link rel="stylesheet" href="styles/components.css">
+  <link rel="stylesheet" href="styles/animations.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <h1 class="site-title">Campus Life Planner</h1>
+      <p class="site-tagline">Tasks, events, and time — organized for campus life</p>
+    </div>
+  </header>
+
+  <nav class="site-nav" aria-label="Main navigation">
+    <ul class="nav-list">
+      <li><a href="#dashboard">Dashboard</a></li>
+      <li><a href="#records">Records</a></li>
+      <li><a href="#add-form">Add</a></li>
+      <li><a href="#settings">Settings</a></li>
+      <li><a href="#about">About</a></li>
+    </ul>
+  </nav>
+
+  <main id="main">
+    <section id="dashboard" class="section" aria-labelledby="dash-heading">
+      <h2 id="dash-heading">Dashboard</h2>
+      <div class="stats-grid" id="stats-grid">
+        <article class="stat-card" aria-labelledby="stat-total-label">
+          <h3 id="stat-total-label" class="stat-label">Total Records</h3>
+          <p class="stat-value" id="stat-total">0</p>
+        </article>
+        <article class="stat-card" aria-labelledby="stat-duration-label">
+          <h3 id="stat-duration-label" class="stat-label">Total Duration</h3>
+          <p class="stat-value" id="stat-duration">0 min</p>
+        </article>
+        <article class="stat-card" aria-labelledby="stat-top-tag-label">
+          <h3 id="stat-top-tag-label" class="stat-label">Top Tag</h3>
+          <p class="stat-value" id="stat-top-tag">—</p>
+        </article>
+        <article class="stat-card stat-card--cap" id="stat-cap-card" aria-labelledby="stat-cap-label">
+          <h3 id="stat-cap-label" class="stat-label">Weekly Cap</h3>
+          <p class="stat-value" id="stat-cap-display">—</p>
+          <p class="stat-sub" id="stat-cap-remaining"></p>
+        </article>
+      </div>
+
+      <div class="trend-section">
+        <h3 id="trend-heading">Last 7 Days</h3>
+        <div
+          class="trend-chart"
+          id="trend-chart"
+          role="img"
+          aria-labelledby="trend-heading"
+          aria-describedby="trend-desc"
+        ></div>
+        <p id="trend-desc" class="visually-hidden">Bar chart showing total planned duration per day for the last seven days.</p>
+      </div>
+    </section>
+
+    <section id="records" class="section" aria-labelledby="records-heading">
+      <div class="section-header">
+        <h2 id="records-heading">Records</h2>
+        <p class="section-desc" id="records-count">Showing 0 records</p>
+      </div>
+
+      <div class="search-bar">
+        <label for="search-pattern">Regex Search</label>
+        <div class="search-controls">
+          <input
+            type="text"
+            id="search-pattern"
+            name="search-pattern"
+            placeholder="e.g. @tag:Study or \b\d{2}:\d{2}\b"
+            aria-describedby="search-help search-error"
+            autocomplete="off"
+          >
+          <label class="checkbox-label">
+            <input type="checkbox" id="search-case-insensitive" checked>
+            Case insensitive
+          </label>
+        </div>
+        <p id="search-help" class="help-text">
+          Try <code>@tag:Study</code>, <code>\b\d{2}:\d{2}\b</code>, or <code>\b(\w+)\s+\1\b</code> for duplicate words.
+        </p>
+        <p id="search-error" class="error-text" role="alert" aria-live="polite" hidden></p>
+      </div>
+
+      <div class="sort-bar" role="group" aria-label="Sort records">
+        <span class="sort-label">Sort by:</span>
+        <button type="button" class="sort-btn" data-sort="dueDate" aria-pressed="true">Date</button>
+        <button type="button" class="sort-btn" data-sort="title" aria-pressed="false">Title</button>
+        <button type="button" class="sort-btn" data-sort="duration" aria-pressed="false">Duration</button>
+      </div>
+
+      <div class="table-wrapper" aria-live="polite" aria-relevant="additions removals">
+        <table class="records-table" id="records-table">
+          <caption class="visually-hidden">Campus life planner records</caption>
+          <thead>
+            <tr>
+              <th scope="col">Title</th>
+              <th scope="col">Due Date</th>
+              <th scope="col">Duration</th>
+              <th scope="col">Tag</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="records-tbody"></tbody>
+        </table>
+      </div>
+
+      <div class="records-cards" id="records-cards" aria-live="polite"></div>
+      <p id="empty-records" class="empty-state" hidden>No records match your search.</p>
+    </section>
+
+    <section id="add-form" class="section" aria-labelledby="form-heading">
+      <h2 id="form-heading">Add Record</h2>
+      <form id="record-form" novalidate>
+        <input type="hidden" id="edit-id" name="edit-id" value="">
+
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required maxlength="120" autocomplete="off">
+          <p class="error-text field-error" id="title-error" role="alert" hidden></p>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="dueDate">Due Date</label>
+            <input type="date" id="dueDate" name="dueDate" required>
+            <p class="error-text field-error" id="dueDate-error" role="alert" hidden></p>
+          </div>
+
+          <div class="form-group">
+            <label for="duration">Duration (<span id="duration-unit-label">minutes</span>)</label>
+            <input type="text" id="duration" name="duration" inputmode="decimal" required placeholder="e.g. 90 or 1.5">
+            <p class="error-text field-error" id="duration-error" role="alert" hidden></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="tag">Tag</label>
+          <input type="text" id="tag" name="tag" list="tag-suggestions" required autocomplete="off">
+          <datalist id="tag-suggestions"></datalist>
+          <p class="error-text field-error" id="tag-error" role="alert" hidden></p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submit-btn">Add Record</button>
+          <button type="button" class="btn btn-secondary" id="cancel-edit-btn" hidden>Cancel Edit</button>
+        </div>
+        <p id="form-status" class="status-text" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+
+    <section id="settings" class="section" aria-labelledby="settings-heading">
+      <h2 id="settings-heading">Settings</h2>
+
+      <fieldset class="settings-group">
+        <legend>Display Units</legend>
+        <div class="form-group">
+          <label for="display-unit">Show duration as</label>
+          <select id="display-unit" name="display-unit">
+            <option value="minutes">Minutes</option>
+            <option value="hours">Hours</option>
+          </select>
+        </div>
+      </fieldset>
+
+      <fieldset class="settings-group">
+        <legend>Weekly Duration Cap</legend>
+        <div class="form-group">
+          <label for="weekly-cap">Cap (<span id="cap-unit-label">minutes</span> per week)</label>
+          <input type="text" id="weekly-cap" name="weekly-cap" inputmode="decimal" placeholder="e.g. 1200">
+          <p class="error-text field-error" id="cap-error" role="alert" hidden></p>
+        </div>
+      </fieldset>
+
+      <fieldset class="settings-group">
+        <legend>Tags</legend>
+        <div class="form-group">
+          <label for="custom-tags">Default tags (comma-separated)</label>
+          <textarea id="custom-tags" name="custom-tags" rows="2"></textarea>
+        </div>
+        <button type="button" class="btn btn-secondary" id="save-tags-btn">Save Tags</button>
+      </fieldset>
+
+      <fieldset class="settings-group">
+        <legend>Data</legend>
+        <div class="data-actions">
+          <button type="button" class="btn btn-secondary" id="export-btn">Export JSON</button>
+          <label class="btn btn-secondary file-label" for="import-file">Import JSON</label>
+          <input type="file" id="import-file" accept=".json,application/json" class="visually-hidden">
+          <button type="button" class="btn btn-secondary" id="load-seed-btn">Load Seed Data</button>
+          <button type="button" class="btn btn-danger" id="clear-data-btn">Clear All Data</button>
+        </div>
+        <p id="settings-status" class="status-text" role="status" aria-live="polite"></p>
+      </fieldset>
+    </section>
+
+    <section id="about" class="section" aria-labelledby="about-heading">
+      <h2 id="about-heading">About</h2>
+      <p>
+        Campus Life Planner helps students organize tasks and events with due dates,
+        durations, and tags. Built with vanilla HTML, CSS, and JavaScript — no frameworks.
+      </p>
+      <ul class="about-links">
+        <li>GitHub: <a href="https://github.com/yourusername/campus-life-planner" rel="noopener noreferrer">github.com/yourusername/campus-life-planner</a></li>
+        <li>Email: <a href="mailto:you@university.edu">you@university.edu</a></li>
+      </ul>
+      <h3>Accessibility</h3>
+      <p>
+        Semantic landmarks, keyboard navigation, visible focus indicators,
+        ARIA live regions for status updates, and WCAG-friendly color contrast.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; 2025 Campus Life Planner. Data stored locally in your browser.</p>
+  </footer>
+
+  <div id="live-polite" class="sr-live" aria-live="polite" aria-atomic="true"></div>
+  <div id="live-assertive" class="sr-live" aria-live="assertive" aria-atomic="true"></div>
+
+  <script type="module" src="scripts/main.js"></script>
+</body>
+</html>
